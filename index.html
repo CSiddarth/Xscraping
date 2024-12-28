@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Trends Scraper</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9fafc;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 2em;
+        }
+
+        button {
+            background-color: #0078D7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px auto;
+            display: block;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #005bb5;
+        }
+
+        #output {
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 800px;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f1f8ff;
+            border: 1px solid #dce5f0;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        ul li:nth-child(odd) {
+            background-color: #e6f0fa;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        pre {
+            background-color: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .json-container {
+            margin-top: 20px;
+        }
+
+        /* Run Again Button */
+        #run-again {
+            margin-top: 30px;
+            background-color: #28a745;
+            display: none;
+        }
+
+        #run-again:hover {
+            background-color: #1e7e34;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 10px 0;
+            font-size: 0.9em;
+            color: #777;
+        }
+    </style>
+<script>
+    async function runScript() {
+        try {
+            // Hide the 'Run Again' button initially
+            document.getElementById('run-again').style.display = 'none';
+
+            // Show a loading message
+            document.getElementById('output').innerHTML = `
+                <p><strong>Loading trends... Please wait.</strong></p>
+            `;
+
+            let response = await fetch('/run-script');
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.statusText}`);
+            }
+
+            let data = await response.json();
+
+            // Display the fetched data
+            document.getElementById('output').innerHTML = `
+                <p><strong>These are the most happening topics as on ${data.date_time}:</strong></p>
+                <ul>
+                    <li>${data.nameoftrend1}</li>
+                    <li>${data.nameoftrend2}</li>
+                    <li>${data.nameoftrend3}</li>
+                    <li>${data.nameoftrend4}</li>
+                    <li>${data.nameoftrend5}</li>
+                </ul>
+                <p><strong>The IP address used for this query was:</strong> ${data.ip_address}</p>
+                <div class="json-container">
+                    <p><strong>Here's a JSON extract:</strong></p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                </div>
+
+            `;
+
+            // Show the 'Run Again' button only after data is fully loaded
+            document.getElementById('run-again').style.display = 'block';
+
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('output').innerHTML = `<p>Error: ${error.message}</p>`;
+        }
+    }
+
+    function runAgain() {
+        runScript();
+    }
+</script>
+
+</head>
+<body>
+    <h1>Twitter Trends Scraper</h1>
+    <button onclick="runScript()">Click here to run the script</button>
+    <div id="output"></div>
+    <button id="run-again" onclick="runAgain()">Click here to run the query again</button>
+    <footer>
+        &copy; 2024 Twitter Trends Scraper. All Rights Reserved.
+    </footer>
+</body>
+</html>
+
